@@ -1,0 +1,77 @@
+services:
+  docmost:
+    image: docmost/docmost:latest
+    container_name: docmost
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      - APP_URL=https://docmost.${BASE_DOMAIN}
+      - APP_SECRET=${DOCMOST_APP_SECRET}
+      - DATABASE_URL=postgresql://docmost:${DOCMOST_DB_PASSWORD}@docmost-db:5432/docmost?schema=public
+      - REDIS_URL=redis://docmost-redis:6379
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_DIR}/docmost/data/storage:/app/data/storage
+    depends_on:
+      - docmost-db
+      - docmost-redis
+    networks:
+      - proxy
+      - backend
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.docmost.rule=Host(`docmost.${BASE_DOMAIN}`)
+      - traefik.http.routers.docmost.entrypoints=websecure
+      - traefik.http.routers.docmost.tls.certresolver=le
+      - traefik.http.routers.docmost.middlewares=security-headers@docker
+      - traefik.http.services.docmost.loadbalancer.server.port=3000
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  docmost-db:
+    image: postgres:16-alpine
+    container_name: docmost-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=docmost
+      - POSTGRES_USER=docmost
+      - POSTGRES_PASSWORD=${DOCMOST_DB_PASSWORD}
+    volumes:
+      - ${DATA_DIR}/docmost/data/db:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docmost -d docmost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  docmost-redis:
+    image: redis:7-alpine
+    container_name: docmost-redis
+    restart: unless-stopped
+    volumes:
+      - ${DATA_DIR}/docmost/data/redis:/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+

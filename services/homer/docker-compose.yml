@@ -1,0 +1,26 @@
+services:
+  homer:
+    image: b4bz/homer:latest
+    container_name: homer
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    volumes:
+      - ${DATA_DIR}/homer/data:/www/assets
+      - ./config.yml:/www/assets/config.yml:ro
+      - ./assets:/www/assets/assets:ro
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.homer.rule=Host(`homer.${BASE_DOMAIN}`)
+      - traefik.http.routers.homer.entrypoints=websecure
+      - traefik.http.routers.homer.tls.certresolver=le
+      - traefik.http.routers.homer.middlewares=security-headers@docker
+      - traefik.http.services.homer.loadbalancer.server.port=8080
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

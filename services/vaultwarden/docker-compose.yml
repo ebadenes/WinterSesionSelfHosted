@@ -1,0 +1,36 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      - DOMAIN=https://vaultwarden.${BASE_DOMAIN}
+      - WEBSOCKET_ENABLED=true
+      - SIGNUPS_ALLOWED=${VW_SIGNUPS_ALLOWED}
+      - ADMIN_TOKEN=${VW_ADMIN_TOKEN}
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_DIR}/vaultwarden/data:/data
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.vaultwarden.rule=Host(`vaultwarden.${BASE_DOMAIN}`)
+      - traefik.http.routers.vaultwarden.entrypoints=websecure
+      - traefik.http.routers.vaultwarden.tls.certresolver=le
+      - traefik.http.routers.vaultwarden.middlewares=security-headers@docker
+      - traefik.http.services.vaultwarden.loadbalancer.server.port=80
+      - traefik.http.routers.vaultwarden-ws.rule=Host(`vaultwarden.${BASE_DOMAIN}`) && PathPrefix(`/notifications/hub`)
+      - traefik.http.routers.vaultwarden-ws.entrypoints=websecure
+      - traefik.http.routers.vaultwarden-ws.tls.certresolver=le
+      - traefik.http.routers.vaultwarden-ws.middlewares=security-headers@docker
+      - traefik.http.routers.vaultwarden-ws.service=vaultwarden
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+

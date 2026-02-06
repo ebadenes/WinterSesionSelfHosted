@@ -1,0 +1,71 @@
+title: "Home"
+subtitle: "Servicios"
+logo: "assets/logo.png"
+header: true
+footer: ""
+columns: "3"
+
+services:
+  - name: "Media"
+    icon: "fas fa-photo-video"
+    items:
+      - name: "Immich"
+        logo: "assets/assets/tools/immich.svg"
+        url: "https://immich.winter.errante.es"
+      - name: "Nextcloud"
+        logo: "assets/assets/tools/nextcloud.svg"
+        url: "https://nextcloud.winter.errante.es"
+
+  - name: "Automatización"
+    icon: "fas fa-robot"
+    items:
+      - name: "n8n"
+        logo: "assets/assets/tools/n8n.svg"
+        url: "https://n8n.winter.errante.es"
+
+  - name: "Documentos"
+    icon: "fas fa-file-alt"
+    items:
+      - name: "Paperless-ngx"
+        logo: "assets/assets/tools/paperless.svg"
+        url: "https://paperless.winter.errante.es"
+      - name: "Docmost"
+        logo: "assets/assets/tools/docmost.svg"
+        url: "https://docmost.winter.errante.es"
+      - name: "Stirling-PDF"
+        logo: "assets/assets/tools/stirling.svg"
+        url: "https://stirling.winter.errante.es"
+
+  - name: "Seguridad"
+    icon: "fas fa-shield-alt"
+    items:
+      - name: "Vaultwarden"
+        logo: "assets/assets/tools/vaultwarden.svg"
+        url: "https://vaultwarden.winter.errante.es"
+
+  - name: "Monitoreo"
+    icon: "fas fa-heartbeat"
+    items:
+      - name: "Uptime Kuma"
+        logo: "assets/assets/tools/kuma.svg"
+        url: "https://kuma.winter.errante.es"
+
+  - name: "Colaboración"
+    icon: "fas fa-users"
+    items:
+      - name: "Zulip"
+        logo: "assets/assets/tools/zulip.svg"
+        url: "https://zulip.winter.errante.es"
+      - name: "Planka"
+        logo: "assets/assets/tools/planka.svg"
+        url: "https://planka.winter.errante.es"
+
+  - name: "Links"
+    icon: "fas fa-link"
+    items:
+      - name: "Linkwarden"
+        logo: "assets/assets/tools/linkwarden.svg"
+        url: "https://linkwarden.winter.errante.es"
+      - name: "Pingvin Share"
+        logo: "assets/assets/tools/pingvin.svg"
+        url: "https://pingvin.winter.errante.es"

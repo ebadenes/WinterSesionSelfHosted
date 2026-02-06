@@ -1,0 +1,57 @@
+services:
+  planka:
+    image: ghcr.io/plankanban/planka:latest
+    container_name: planka
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      - BASE_URL=https://planka.${BASE_DOMAIN}
+      - DATABASE_URL=postgresql://postgres:${PLANKA_DB_PASSWORD}@planka-db:5432/planka
+      - SECRET_KEY=${PLANKA_SECRET_KEY}
+      - TRUST_PROXY=true
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_DIR}/planka/data/app:/app/data
+    depends_on:
+      - planka-db
+    networks:
+      - proxy
+      - backend
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.planka.rule=Host(`planka.${BASE_DOMAIN}`)
+      - traefik.http.routers.planka.entrypoints=websecure
+      - traefik.http.routers.planka.tls.certresolver=le
+      - traefik.http.routers.planka.middlewares=security-headers@docker
+      - traefik.http.services.planka.loadbalancer.server.port=1337
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  planka-db:
+    image: postgres:16-alpine
+    container_name: planka-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=planka
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${PLANKA_DB_PASSWORD}
+    volumes:
+      - ${DATA_DIR}/planka/data/db:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d planka"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+

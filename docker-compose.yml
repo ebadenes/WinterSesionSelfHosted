@@ -1,0 +1,23 @@
+include:
+  - services/traefik/docker-compose.yml
+  # - services/immich/docker-compose.yml
+  # - services/n8n/docker-compose.yml
+  # - services/docmost/docker-compose.yml
+  # - services/stirling-pdf/docker-compose.yml
+  # - services/vaultwarden/docker-compose.yml
+  # - services/uptime-kuma/docker-compose.yml
+  # - services/zulip/docker-compose.yml
+  # - services/pingvin-share/docker-compose.yml
+  # - services/linkwarden/docker-compose.yml
+  # - services/paperless-ngx/docker-compose.yml
+  # - services/planka/docker-compose.yml
+  # - services/nextcloud/docker-compose.yml
+  # - services/homer/docker-compose.yml
+
+networks:
+  proxy:
+    name: proxy
+    driver: bridge
+  backend:
+    name: backend
+    driver: bridge

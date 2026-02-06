@@ -1,0 +1,33 @@
+services:
+  stirling-pdf:
+    image: stirlingtools/stirling-pdf:latest
+    container_name: stirling-pdf
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      - SECURITY_ENABLELOGIN=false
+      - LANGS=en_GB
+      - TZ=${TZ}
+    volumes:
+      - ${DATA_DIR}/stirling-pdf/data/configs:/configs
+      - ${DATA_DIR}/stirling-pdf/data/logs:/logs
+      - ${DATA_DIR}/stirling-pdf/data/pipeline:/pipeline
+      - ${DATA_DIR}/stirling-pdf/data/tessdata:/usr/share/tessdata
+      - ${DATA_DIR}/stirling-pdf/data/customFiles:/customFiles
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.stirling.rule=Host(`stirling.${BASE_DOMAIN}`)
+      - traefik.http.routers.stirling.entrypoints=websecure
+      - traefik.http.routers.stirling.tls.certresolver=le
+      - traefik.http.routers.stirling.middlewares=security-headers@docker
+      - traefik.http.services.stirling.loadbalancer.server.port=8080
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
